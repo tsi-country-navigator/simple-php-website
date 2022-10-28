@@ -12,5 +12,10 @@ jobs:
     - uses: php-actions/phpstan@v3
       with:
         path: src/
+    - uses: MilesChou/composer-action@master
+      with:
+        args: install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+
+    - uses: stefanzweifel/phpinsights-action@v1.1.1
 
     # ... then your own project steps ...
