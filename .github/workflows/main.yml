@@ -8,9 +8,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2 # or alternative dependency management
-    - uses: php-actions/phpstan@v3
-      with:
-        path: src/
     - uses: MilesChou/composer-action@master
       with:
         args: install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
