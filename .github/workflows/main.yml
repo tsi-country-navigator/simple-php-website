@@ -7,10 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2 # or alternative dependency management
-    - uses: MilesChou/composer-action@master
-      with:
-        args: install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+    - uses: actions/checkout@v2 # or alternative dependency manageme
 
     - uses: stefanzweifel/phpinsights-action@v1.1.1
 
