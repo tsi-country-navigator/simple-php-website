@@ -1,14 +1,15 @@
-name: CI
+name: PHP Insights
 
-on: [push]
+on: push
 
 jobs:
-  build-test:
+  phpinsights:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2 # or alternative dependency manageme
+    - uses: actions/checkout@v1
+
+    - uses: MilesChou/composer-action@master
+      with:
+        args: install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
 
     - uses: stefanzweifel/phpinsights-action@v1.1.1
-
-    # ... then your own project steps ...
