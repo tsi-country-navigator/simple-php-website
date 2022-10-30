@@ -1,39 +1,16 @@
-name: PHPStan
-
+#.github/workflows/pr.yml
+name: CI
 on:
-  # Run on all pushes and on all pull requests.
-  # Prevent the build from running when there are only irrelevant changes.
-  push:
-    paths-ignore:
-      - '**.md'
-  pull_request:
-    paths-ignore:
-      - '**.md'
-  # Allow manually triggering the workflow.
-  workflow_dispatch:
+    - pull_request
 
 jobs:
-  phpstan:
-    name: "PHP: 8.1 | PHPStan"
-
-    runs-on: "ubuntu-latest"
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-          coverage: none
-          tools: phpstan
-
-      # Install dependencies and handle caching in one go.
-      # Dependencies need to be installed to make sure the PHPUnit classes are recognized.
-      # @link https://github.com/marketplace/actions/install-composer-dependencies
-      - name: Install Composer dependencies
-        uses: "ramsey/composer-install@v2"
-
-      - name: Run PHPStan
-        run: phpstan analyse --configuration=phpstan.neon
+    phpinsights:
+        runs-on: ubuntu-latest
+        name: PHP Insights checks
+        steps:
+            - uses: actions/checkout@v2
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 8.0
+            - run: composer install --prefer-dist --no-progress --no-suggest
+            - run: vendor/bin/phpinsights -n --ansi --format=github-action
