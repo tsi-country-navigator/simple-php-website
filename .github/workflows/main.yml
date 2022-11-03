@@ -1,16 +1,45 @@
-#.github/workflows/pr.yml
-name: CI
-on:
-    - push
+name: Unit Tests
 
+on:
+    pull_request: ~
+    push:
+        branches:
+            - master
 jobs:
-    phpinsights:
+    ci:
         runs-on: ubuntu-latest
-        name: PHP Insights checks
+        strategy:
+            fail-fast: true
+            matrix:
+                php: ['7.4', '8.0', '8.1']
+                dependency-version: [prefer-lowest, prefer-stable]
+                composer-version: [ v2 ]
+                exclude:
+                    -   dependency-version: prefer-lowest
+                        php: '8.0'
+                    -   dependency-version: prefer-lowest
+                        php: '8.1'
+        name: ${{ matrix.php }} - Composer ${{ matrix.composer-version }} --${{ matrix.dependency-version }}
+
         steps:
-            - uses: actions/checkout@v2
-            - uses: shivammathur/setup-php@v2
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Cache dependencies
+              uses: actions/cache@v1
               with:
-                  php-version: 8.0
-            - run: composer install --prefer-dist --no-progress --no-suggest
-            - run: vendor/bin/phpinsights -n --ansi --format=github-action
+                  path: ~/.composer/cache/files
+                  key: dependencies-php-${{ matrix.php }}-composer-${{ matrix.composer-version }}
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  extensions: dom, mbstring, zip, xml
+                  coverage: none
+                  tools: composer:${{ matrix.composer-version }}
+
+            - name: Install Composer dependencies
+              run: composer update --${{ matrix.dependency-version }} --ansi --no-interaction --prefer-dist
+            - name: Unit Tests
+              run: vendor/bin/phpunit --color=always
